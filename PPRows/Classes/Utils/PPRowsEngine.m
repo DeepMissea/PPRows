@@ -102,7 +102,12 @@
         _codeFileNumber += 1;
         
         NSString *content = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
-        NSMutableArray *array = [NSMutableArray arrayWithArray:[content componentsSeparatedByString:@"\n"]];
+        
+        NSString *checkStr = @"(//.*)|(/\\*[\\s\\S]*?\\*/)";
+        NSRegularExpression *regular = [[NSRegularExpression alloc] initWithPattern:checkStr options:1 error:nil];
+        NSString *regularContent = [regular stringByReplacingMatchesInString:content options:0 range:NSMakeRange(0, [content length]) withTemplate:@""];
+        
+        NSMutableArray *array = [NSMutableArray arrayWithArray:[regularContent componentsSeparatedByString:@"\n"]];
         // 清除空行 <-> Clear blank
         [array removeObjectsInArray:@[@"",@"    "]];
         return array.count;
